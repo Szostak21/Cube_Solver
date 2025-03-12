@@ -2,7 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-
+#include "moves.cpp"
 using namespace std;
 
 void load(const string& input, char cube[6][3][3]) {
@@ -20,31 +20,6 @@ void load(const string& input, char cube[6][3][3]) {
     } else {
         cout << "Unable to open file";
     }
-}
-
-void rotateClockwise(char cube[6][3][3], int face) {
-    char temp[3];
-    
-    for (int i = 0; i < 3; ++i) {
-        temp[i] = cube[face][0][i];
-    }
-    
-    for (int i = 0; i < 3; ++i) {
-        cube[face][0][i] = cube[face][2 - i][0];
-    }
-    
-    for (int i = 0; i < 3; ++i) {
-        cube[face][2 - i][0] = cube[face][2][2 - i];
-    }
-    
-    for (int i = 0; i < 3; ++i) {
-        cube[face][2][2 - i] = cube[face][i][2];
-    }
-    
-    for (int i = 0; i < 3; ++i) {
-        cube[face][i][2] = temp[i];
-    }
-
 }
 
 void print_cube(char cube[6][3][3]) {
@@ -86,10 +61,18 @@ void print_cube(char cube[6][3][3]) {
 
 int main() {
     const string filename = "input.txt";
-    char cube[6][3][3];
+    static char cube[6][3][3];
+    static char goal[6][3][3] = {
+        {{'Y', 'Y', 'Y'}, {'Y', 'Y', 'Y'}, {'Y', 'Y', 'Y'}},
+        {{'O', 'O', 'O'}, {'O', 'O', 'O'}, {'O', 'O', 'O'}},
+        {{'B', 'B', 'B'}, {'B', 'B', 'B'}, {'B', 'B', 'B'}},
+        {{'R', 'R', 'R'}, {'R', 'R', 'R'}, {'R', 'R', 'R'}},
+        {{'G', 'G', 'G'}, {'G', 'G', 'G'}, {'G', 'G', 'G'}},
+        {{'W', 'W', 'W'}, {'W', 'W', 'W'}, {'W', 'W', 'W'}}
+    };
     
     load(filename, cube);
-    rotateClockwise(cube, 0);
+    U(cube);
     print_cube(cube);
     return 0;
 }
