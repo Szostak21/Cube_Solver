@@ -1,0 +1,26 @@
+# Ignore build folder
+build/
+
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Compiled binaries
+*.out
+*.o
+*.so
+*.a
+*.exe
+
+# Editor-specific files
+*.swp
+*.swo
+*~
+.vscode/settings.json
+.vscode/c_cpp_properties.json
+
+# Mac/Linux hidden files
+.DS_Store
+
