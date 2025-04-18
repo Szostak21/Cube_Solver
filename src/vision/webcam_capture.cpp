@@ -1,11 +1,16 @@
 #include <webcam_capture.h>
 #include <iostream>
+#include <thread>
+#include <chrono>
 #include <opencv2/opencv.hpp>
 
 WebcamCapture::WebcamCapture(int cameraIndex) {
     cap.open(cameraIndex);
     if (!cap.isOpened()) {
         std::cerr << "Error: Could not open camera." << std::endl;  //check if camera opened
+    }
+    else {
+        std::cout << "Camera opened successfully." << std::endl;
     }
 }
 
@@ -23,7 +28,7 @@ bool WebcamCapture::captureFrame() {
     }
 }
 
-cv::Mat WebcamCapture::getFrame() const {
+cv::Mat WebcamCapture::getFrame() {
     return frame;
 }
 

@@ -7,15 +7,13 @@ find_package(OpenCV REQUIRED)
 
 include_directories(include ${OpenCV_INCLUDE_DIRS})
 
-
 add_executable(Cube_Solver 
     src/main.cpp
     src/vision/webcam_capture.cpp
+    src/vision/color_detection.cpp
 )
 
 target_link_libraries(Cube_Solver ${OpenCV_LIBS})
-
-
 
 add_executable(TestWebcam
     src/vision/test_webcam.cpp

@@ -11,7 +11,7 @@ public:
 
     bool captureFrame();
 
-    cv::Mat getFrame() const;
+    cv::Mat getFrame();
 
     void showFrame(const std::string& windowName = "Webcam");
 

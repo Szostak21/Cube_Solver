@@ -3,13 +3,14 @@
 
 #include <opencv2/opencv.hpp>
 #include <vector>
+#include <string> 
 
 class ColorDetector {
 public:
     ColorDetector();
     ~ColorDetector();
 
-    std::vector<cv::Rect> detectColors(const cv::Mat &frame);
+    std::vector<std::pair<std::string, cv::Rect>> detectColors(const cv::Mat &frame);
 
     cv::Mat preprocessImage(const cv::Mat &frame);
 
@@ -27,8 +28,7 @@ private:
     cv::Scalar lower_white = cv::Scalar(0, 0, 200);
     cv::Scalar upper_white = cv::Scalar(180, 20, 255);
 
+    std::vector<std::pair<std::string, std::pair<cv::Scalar, cv::Scalar>>> colorRanges;
 };
-
-
 
 #endif
