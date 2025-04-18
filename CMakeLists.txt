@@ -1,20 +1,25 @@
 cmake_minimum_required(VERSION 3.10)
-project(RubiksCubeSolver)
+project(Cube_Solver)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# Find OpenCV
 find_package(OpenCV REQUIRED)
-include_directories(${OpenCV_INCLUDE_DIRS})
 
-# Include your own headers if needed
-include_directories(include)
+include_directories(include ${OpenCV_INCLUDE_DIRS})
 
-# Collect all .cpp files
-file(GLOB_RECURSE SOURCES "src/*.cpp")
 
-# Build executable
-add_executable(RubiksCubeSolver ${SOURCES})
+add_executable(Cube_Solver 
+    src/main.cpp
+    src/vision/webcam_capture.cpp
+)
 
-# Link OpenCV libraries
-target_link_libraries(RubiksCubeSolver ${OpenCV_LIBS})
+target_link_libraries(Cube_Solver ${OpenCV_LIBS})
+
+
+
+add_executable(TestWebcam
+    src/vision/test_webcam.cpp
+    src/vision/webcam_capture.cpp
+)
+
+target_link_libraries(TestWebcam ${OpenCV_LIBS})
