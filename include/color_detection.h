@@ -15,23 +15,33 @@ public:
     cv::Mat preprocessImage(const cv::Mat &frame);
 
 private:
-    cv::Scalar lower_red = cv::Scalar(0, 120, 70);        
-    cv::Scalar upper_red = cv::Scalar(5, 255, 255); 
+    // RED (wraps around hue 0)
+cv::Scalar lower_red1 = cv::Scalar(170, 210, 60);
+cv::Scalar upper_red1 = cv::Scalar(180, 255, 90);
+cv::Scalar lower_red2 = cv::Scalar(0, 210, 60);
+cv::Scalar upper_red2 = cv::Scalar(5, 255, 90);
 
-    cv::Scalar lower_green = cv::Scalar(50, 70, 70);   
-    cv::Scalar upper_green = cv::Scalar(80, 255, 255);  
+// ORANGE
+cv::Scalar lower_orange = cv::Scalar(5, 180, 140);
+cv::Scalar upper_orange = cv::Scalar(25, 240, 170);
 
-    cv::Scalar lower_blue = cv::Scalar(100, 150, 0);
-    cv::Scalar upper_blue = cv::Scalar(140, 255, 255);
+// YELLOW
+cv::Scalar lower_yellow = cv::Scalar(35, 180, 120);
+cv::Scalar upper_yellow = cv::Scalar(50, 210, 180);
 
-    cv::Scalar lower_yellow = cv::Scalar(20, 100, 100);
-    cv::Scalar upper_yellow = cv::Scalar(50, 255, 255);
+// GREEN
+cv::Scalar lower_green = cv::Scalar(65, 230, 90);
+cv::Scalar upper_green = cv::Scalar(75, 255, 125);
 
-    cv::Scalar lower_orange = cv::Scalar(11, 100, 20);    
-    cv::Scalar upper_orange = cv::Scalar(25, 255, 255); 
+// BLUE
+cv::Scalar lower_blue = cv::Scalar(100, 220, 90);
+cv::Scalar upper_blue = cv::Scalar(105, 255, 120);
 
-    cv::Scalar lower_white = cv::Scalar(0, 0, 180);
-    cv::Scalar upper_white = cv::Scalar(180, 20, 255); 
+// WHITE (low S, high V)
+cv::Scalar lower_white = cv::Scalar(85, 20, 100);
+cv::Scalar upper_white = cv::Scalar(105, 60, 145);
+
+
 
     std::vector<std::pair<std::string, std::pair<cv::Scalar, cv::Scalar>>> colorRanges;
 };

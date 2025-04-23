@@ -11,6 +11,7 @@ add_executable(Cube_Solver
     src/main.cpp
     src/vision/webcam_capture.cpp
     src/vision/color_detection.cpp
+    src/vision/grid_overlay.cpp
 )
 
 target_link_libraries(Cube_Solver ${OpenCV_LIBS})
@@ -21,3 +22,11 @@ add_executable(TestWebcam
 )
 
 target_link_libraries(TestWebcam ${OpenCV_LIBS})
+
+add_executable(Calibrate
+    src/vision/color_calibration.cpp
+    src/vision/webcam_capture.cpp
+    src/vision/color_detection.cpp
+)
+
+target_link_libraries(Calibrate ${OpenCV_LIBS})

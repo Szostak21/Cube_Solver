@@ -7,7 +7,8 @@ ColorDetector::ColorDetector() {
         {"green", {lower_green, upper_green}},
         {"orange", {lower_orange, upper_orange}},
         {"blue", {lower_blue, upper_blue}},
-        {"red", {lower_red, upper_red}},
+        {"red", {lower_red1, upper_red1}},
+        {"red", {lower_red2, upper_red2}},
         {"white", {lower_white, upper_white}}
     };
 }
