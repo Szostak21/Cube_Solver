@@ -48,8 +48,8 @@ int main() {
             else if (colorCenter == "Green")  { colorCenter = "Orange"; colorAbove = "Yellow"; }
             else if (colorCenter == "Orange") { colorCenter = "Blue";   colorAbove = "Yellow"; }
             else if (colorCenter == "Blue")   { colorCenter = "Red";    colorAbove = "Yellow"; }
-            else if (colorCenter == "Red")    { colorCenter = "White";  colorAbove = "Red";    }
-            else if (colorCenter == "White")  { colorCenter = "Yellow"; colorAbove = "Blue";   }
+            else if (colorCenter == "Red")    { colorCenter = "White";  colorAbove = "Orange"; }
+            else if (colorCenter == "White")  { colorCenter = ""; colorAbove = "";   break;}
         }
 
         cv::imshow("Rubik's Cube Grid Overlay", frame);
@@ -60,8 +60,8 @@ int main() {
         std::cout << "Face: " << entry.first << std::endl;
         for (const auto& sample : entry.second) {
             std::cout << "  HSV: (" << static_cast<int>(sample[0]) << ", "
-                                      << static_cast<int>(sample[1]) << ", "
-                                      << static_cast<int>(sample[2]) << ")" << std::endl;
+                                    << static_cast<int>(sample[1]) << ", "
+                                    << static_cast<int>(sample[2]) << ")" << std::endl;
         }
     }
 

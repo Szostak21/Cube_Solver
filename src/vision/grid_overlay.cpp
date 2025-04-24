@@ -24,13 +24,13 @@ void GridOverlay::drawGrid(cv::Mat& frame, const std::string& colorAbove, const 
                         cv::Point(gridStartX + gridSize, gridStartY + offset), colorWhite, 2);
     }
 
-    int fontFace = cv::FONT_HERSHEY_TRIPLEX;
+    int fontFace = cv::FONT_HERSHEY_DUPLEX;
     double fontScale = 0.7;
-    int thickness = 2;
+    float thickness = 1.5;
     int baseline = 0;
 
-    std::string aboveLabel = "Above: " + colorAbove;
-    std::string centerLabel = "Center: " + colorCenter;
+    std::string aboveLabel = "CENTER piece of the TOP face: " + colorAbove;
+    std::string centerLabel = "CENTER piece of the SCANNED face: " + colorCenter;
 
     cv::Size aboveSize = cv::getTextSize(aboveLabel, fontFace, fontScale, thickness, &baseline);
     cv::Size centerSize = cv::getTextSize(centerLabel, fontFace, fontScale, thickness, &baseline);
