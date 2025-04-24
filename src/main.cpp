@@ -1,14 +1,14 @@
 #include <opencv2/opencv.hpp>
 #include <iostream>
 #include "webcam_capture.h"
-#include "color_detection.h"
 #include "grid_overlay.h"
-
+#include "color_clustering.h"
 int main() {
     WebcamCapture webcam(0);
     GridOverlay gridOverlay(100, 100, 150, "Red", "Yellow", webcam);
+    ColorClustering colorClustering;
 
-    std::map<std::string, std::vector<cv::Vec3f>> cubeSamples;
+    std::map<std::string, std::vector<cv::Vec<float, 3>>> cubeSamples;
     std::string colorAbove = "Blue";
     std::string colorCenter = "Yellow";
     
@@ -55,8 +55,10 @@ int main() {
         cv::imshow("Rubik's Cube Grid Overlay", frame);
     }
 
-    std::cout << "Captured Samples for each face:" << std::endl;
-    for (const auto& entry : cubeSamples) {
+    std::map<std::string, std::vector<cv::Vec<float, 3>>> clusteredSamples = colorClustering.assignColorsToCenters(cubeSamples);
+
+    std::cout << "Clustered Samples:" << std::endl;
+    for (const auto& entry : clusteredSamples) {
         std::cout << "Face: " << entry.first << std::endl;
         for (const auto& sample : entry.second) {
             std::cout << "  HSV: (" << static_cast<int>(sample[0]) << ", "
@@ -65,6 +67,6 @@ int main() {
         }
     }
 
-    cv::destroyAllWindows();
+    cv::destroyAllWindows();    
     return 0;
 }
