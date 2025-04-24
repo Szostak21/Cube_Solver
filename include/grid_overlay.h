@@ -13,7 +13,7 @@ public:
 
     void updateFaceLabels(const std::string& newAboveColor, const std::string& newCenterColor);
 
-    void captureFace();
+    std::vector<cv::Vec<float, 3>> captureFace();
 
 private:
     int gridStartX;

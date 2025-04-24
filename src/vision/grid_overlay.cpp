@@ -52,6 +52,26 @@ void GridOverlay::updateFaceLabels(const std::string& newAboveColor, const std::
     centerColor = newCenterColor;
 }
 
-void GridOverlay::captureFace() {
-    // Placeholder for capturing logic, if needed later
+std::vector<cv::Vec<float, 3>> GridOverlay::captureFace() {
+    cv::Mat frame = webcamCapture.getFrame();
+
+    cv::Mat hsv;
+    cv::cvtColor(frame, hsv, cv::COLOR_BGR2HSV);
+
+    int cellSize = gridSize / 3;
+    std::vector<cv::Vec<float, 3>> hsvSamples;
+
+    for (int row = 0; row < 3; ++row) {
+        for (int col = 0; col < 3; ++col) {
+            int cx = gridStartX + col * cellSize + cellSize / 2;
+            int cy = gridStartY + row * cellSize + cellSize / 2;
+
+            cv::Rect region(cx - 2, cy - 2, 5, 5);
+            cv::Mat patch = hsv(region);
+
+            cv::Scalar avg = cv::mean(patch);
+            hsvSamples.push_back(cv::Vec<float, 3>(avg[0], avg[1], avg[2]));
+        }
+    }
+    return hsvSamples;
 }
