@@ -3,6 +3,22 @@
 #include "webcam_capture.h"
 #include "grid_overlay.h"
 #include "color_clustering.h"
+#include "kociemba_string.h"
+
+std::string run_python_kociemba(const std::string& kociembaString) {
+    std::string command = "python3 -c \"import kociemba; print(kociemba.solve('" + kociembaString + "'))\" 2>/dev/null";
+    std::array<char, 128> buffer;
+    std::string result;
+    FILE* pipe = popen(command.c_str(), "r");
+    if (!pipe) throw std::runtime_error("popen() failed!");
+    while (fgets(buffer.data(), buffer.size(), pipe) != nullptr) {
+        result += buffer.data();
+    }
+    pclose(pipe);
+    if (!result.empty() && result[result.size()-1] == '\n') result.pop_back();
+    return result;
+}
+
 int main() {
     WebcamCapture webcam(0);
     GridOverlay gridOverlay(100, 100, 150, "Red", "Yellow", webcam);
@@ -11,15 +27,6 @@ int main() {
     std::map<std::string, std::vector<cv::Vec<float, 3>>> cubeSamples;
     std::string colorAbove = "Blue";
     std::string colorCenter = "Yellow";
-    
-    std::map<std::string, std::string> faceOrder = {
-        {"Yellow", "Blue"},  // U, above is Blue
-        {"Green", "Yellow"}, // L, above is Yellow
-        {"Orange", "Yellow"}, // F, above is Yellow
-        {"Blue", "Yellow"}, // R, above is Yellow
-        {"Red", "Yellow"},  // B, above is Yellow
-        {"White", "Red"}    // D, above is Red
-    };
 
     while (true) {
         if (!webcam.captureFrame()) {
@@ -55,18 +62,25 @@ int main() {
         cv::imshow("Rubik's Cube Grid Overlay", frame);
     }
 
-    std::map<std::string, std::vector<cv::Vec<float, 3>>> clusteredSamples = colorClustering.assignColorsToCenters(cubeSamples);
+    std::map<std::string, std::vector<std::string>> clusteredStickers = colorClustering.assignColorsToCenters(cubeSamples);
 
-    std::cout << "Clustered Samples:" << std::endl;
-    for (const auto& entry : clusteredSamples) {
+    std::cout << "Clustered Stickers:" << std::endl;
+    for (const auto& entry : clusteredStickers) {
         std::cout << "Face: " << entry.first << std::endl;
-        for (const auto& sample : entry.second) {
-            std::cout << "  HSV: (" << static_cast<int>(sample[0]) << ", "
-                                    << static_cast<int>(sample[1]) << ", "
-                                    << static_cast<int>(sample[2]) << ")" << std::endl;
+        for (const auto& sticker : entry.second) {
+            std::cout << "  " << sticker << std::endl;
         }
     }
 
-    cv::destroyAllWindows();    
+    std::string kociembaString = buildKociembaString(clusteredStickers);
+    std::cout << "Kociemba String: " << kociembaString << std::endl;
+    std::string solution = run_python_kociemba(kociembaString);
+    if (solution.empty() || solution.find("ValueError") != std::string::npos) {
+        std::cerr << "Error: Invalid Kociemba string. Please scan the cube again." << std::endl;
+        return 1;
+}
+    std::cout << "Kociemba Solution: " << solution << std::endl;
+
+    cv::destroyAllWindows();
     return 0;
 }

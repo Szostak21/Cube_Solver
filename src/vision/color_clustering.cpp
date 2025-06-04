@@ -11,34 +11,37 @@ float ColorClustering::hsvDistance(const cv::Vec<float, 3>& a, const cv::Vec<flo
 
 bool ColorClustering::compareByDistance(const std::pair<float, cv::Vec<float, 3>>& a,
     const std::pair<float, cv::Vec<float, 3>>& b) {
-return a.first < b.first;
+    return a.first < b.first;
 }
 
-std::map<std::string, std::vector<cv::Vec<float, 3>>> ColorClustering::assignColorsToCenters(const std::map<std::string, std::vector<cv::Vec<float, 3>>>& cubeSamples) {
-    std::map<std::string, std::vector<cv::Vec<float, 3>>> clustered;
+std::map<std::string, std::vector<std::string>> ColorClustering::assignColorsToCenters(
+    const std::map<std::string, std::vector<cv::Vec<float, 3>>>& cubeSamples)
+{
+    std::vector<std::string> facesInOrder = {"Yellow", "Orange", "Red", "Green", "Blue", "White"};
+
     std::map<std::string, cv::Vec<float, 3>> faceCenters;
-
-    for (auto& [face, samples] : cubeSamples) {
-        faceCenters[face] = samples[4];
+    for (const auto& [face, samples] : cubeSamples) {
+        faceCenters[face] = samples[4]; // center sample
     }
 
-    for (auto& [face, samples] : cubeSamples) {
-        std::vector<std::pair<float, cv::Vec<float, 3>>> distances;
-
-        for (auto& sample : samples) {
-            float distance = hsvDistance(sample, faceCenters[face]);
-            distances.push_back({distance, sample});
-        }
-
-        std::sort(distances.begin(), distances.end(), compareByDistance);
-
-        std::vector<cv::Vec<float, 3>> closestSamples;
+    std::map<std::string, std::vector<std::string>> clusteredStickers;
+    for (const auto& face : facesInOrder) {
+        const auto& samples = cubeSamples.at(face);
+        std::vector<std::string> assigned(9);
         for (int i = 0; i < 9; ++i) {
-            closestSamples.push_back(distances[i].second);
+            const auto& sample = samples[i];
+            float minDistance = std::numeric_limits<float>::max();
+            std::string bestFace;
+            for (const auto& [centerFace, centerHSV] : faceCenters) {
+                float dist = hsvDistance(sample, centerHSV);
+                if (dist < minDistance) {
+                    minDistance = dist;
+                    bestFace = centerFace;
+                }
+            }
+            assigned[i] = bestFace;
         }
-
-        clustered[face] = closestSamples;
+        clusteredStickers[face] = assigned;
     }
-
-    return clustered;
+    return clusteredStickers;
 }
