@@ -9,7 +9,7 @@
 This program uses Cmake so you need to build it manually or use an IDE like CLion to use it.
 
 ### 2. Select a mode by choosing either 1 or 2.
-Rubik's Cube Notation is a set of Labels for each move possible to do on the cube.
+Rubik's Cube Notation is a set of labels for each move possible to do on the cube.
 If you want to learn it follow this chart:
 https://jperm.net/3x3/moves
 
@@ -17,6 +17,7 @@ Or just use option 2 which displays in plain English what faces you have to turn
 
 ### 3. Scan the cube.
 Make sure the cube fits EXACTLY in the grid, the CENTER pieces match the colors displayed on the screen and you are using the program in quite good light. 
+Press space or enter to scan the face when ready. Make sure to match the new orientation of center pieces for each face.
 This is crucial to get a successful scan.
 
 ### 4. Follow the solution or try again.
