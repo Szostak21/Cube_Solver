@@ -11,8 +11,9 @@ add_executable(Cube_Solver
     src/main.cpp
     src/vision/webcam_capture.cpp
     src/vision/grid_overlay.cpp
-    src/vision/color_clustering.cpp
-    src/vision/kociemba_string.cpp
+    src/solver/color_clustering.cpp
+    src/solver/kociemba_string.cpp
+    src/solver/kociemba.cpp
 )
 
 target_link_libraries(Cube_Solver ${OpenCV_LIBS})

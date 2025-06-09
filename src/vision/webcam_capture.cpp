@@ -9,9 +9,6 @@ WebcamCapture::WebcamCapture(int cameraIndex) {
     if (!cap.isOpened()) {
         std::cerr << "Error: Could not open camera." << std::endl;  //check if camera opened
     }
-    else {
-        std::cout << "Camera opened successfully." << std::endl;
-    }
 }
 
 WebcamCapture::~WebcamCapture() {

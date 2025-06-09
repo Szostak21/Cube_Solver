@@ -13,7 +13,7 @@ public:
 
     cv::Mat getFrame();
 
-    void showFrame(const std::string& windowName = "Webcam");
+    void showFrame(const std::string& windowName);
 
 private:
     cv::VideoCapture cap;   
