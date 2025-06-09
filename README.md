@@ -11,6 +11,7 @@ This program uses Cmake so you need to build it manually or use an IDE like CLio
 ### 2. Select a mode by choosing either option 1 or 2.
 Option 1 is the Rubik's Cube Notation which is a set of labels for each move possible to do on the cube.
 If you want to learn it follow this chart:
+
 https://jperm.net/3x3/moves
 
 Or just use option 2 which displays in plain English what faces you have to turn in order to solve the cube.
