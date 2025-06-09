@@ -8,8 +8,8 @@
 ### 1. Follow the instructions in "How to build" section.
 This program uses Cmake so you need to build it manually or use an IDE like CLion to use it.
 
-### 2. Select a mode by choosing either 1 or 2.
-Rubik's Cube Notation is a set of labels for each move possible to do on the cube.
+### 2. Select a mode by choosing either option 1 or 2.
+Option 1 is the Rubik's Cube Notation which is a set of labels for each move possible to do on the cube.
 If you want to learn it follow this chart:
 https://jperm.net/3x3/moves
 
