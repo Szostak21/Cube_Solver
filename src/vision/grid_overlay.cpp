@@ -1,4 +1,5 @@
 #include "grid_overlay.h"
+#include <map>
 
 GridOverlay::GridOverlay(int startX, int startY, int size, const std::string& aboveColor, const std::string& centerColor, WebcamCapture& webcam)
     : gridStartX(startX), gridStartY(startY), gridSize(size),
@@ -6,7 +7,7 @@ GridOverlay::GridOverlay(int startX, int startY, int size, const std::string& ab
       colorYellow(0, 255, 255), colorRed(0, 0, 255), colorBlue(255, 0, 0),
       colorWhite(255, 255, 255), colorGreen(0, 255, 0), colorOrange(0, 165, 255) {}
 
-void GridOverlay::drawGrid(cv::Mat& frame, const std::string& colorAbove, const std::string& colorCenter) {
+void GridOverlay::drawGrid(cv::Mat& frame, const std::string& colorAbove, const std::string& colorCenter, int language) {
     int frameWidth = frame.cols;
     int frameHeight = frame.rows;
 
@@ -29,8 +30,17 @@ void GridOverlay::drawGrid(cv::Mat& frame, const std::string& colorAbove, const 
     float thickness = 1.5;
     int baseline = 0;
 
-    std::string aboveLabel = "CENTER piece of the TOP face: " + colorAbove;
-    std::string centerLabel = "CENTER piece of the SCANNED face: " + colorCenter;
+    std::string aboveLabel, centerLabel;
+    std::string aboveColorLabel = translateColorName(colorAbove, language);
+    std::string centerColorLabel = translateColorName(colorCenter, language);
+
+    if (language == 1) {
+        aboveLabel = "CENTER piece of the TOP face: " + aboveColorLabel;
+        centerLabel = "CENTER piece of the SCANNED face: " + centerColorLabel;
+    } else {
+        aboveLabel = "Kolor SRODKA GORNEJ sciany: " + aboveColorLabel;
+        centerLabel = "Kolor SRODKA SKANOWANEJ sciany: " + centerColorLabel;
+    }
 
     cv::Size aboveSize = cv::getTextSize(aboveLabel, fontFace, fontScale, thickness, &baseline);
     cv::Size centerSize = cv::getTextSize(centerLabel, fontFace, fontScale, thickness, &baseline);
@@ -63,7 +73,8 @@ std::vector<cv::Vec<float, 3>> GridOverlay::captureFace() {
 
     for (int row = 0; row < 3; ++row) {
         for (int col = 0; col < 3; ++col) {
-            int cx = gridStartX + col * cellSize + cellSize / 2;
+            int mirroredCol = 2 - col;
+            int cx = gridStartX + mirroredCol * cellSize + cellSize / 2;
             int cy = gridStartY + row * cellSize + cellSize / 2;
 
             cv::Rect region(cx - 2, cy - 2, 5, 5);
@@ -74,4 +85,22 @@ std::vector<cv::Vec<float, 3>> GridOverlay::captureFace() {
         }
     }
     return hsvSamples;
+}
+
+std::string GridOverlay::translateColorName(const std::string& color, int language) const {
+    static const std::map<std::string, std::string> enToPl = {
+        {"Yellow", "Zolty"},
+        {"Green", "Zielony"},
+        {"Orange", "Pomaranczowy"},
+        {"Blue", "Niebieski"},
+        {"Red", "Czerwony"},
+        {"White", "Bialy"}
+    };
+    if (language == 1) {
+        return color;
+    } else {
+        auto it = enToPl.find(color);
+        if (it != enToPl.end()) return it->second;
+        return color;
+    }
 }

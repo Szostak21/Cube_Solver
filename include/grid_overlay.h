@@ -9,7 +9,7 @@ class GridOverlay {
 public:
     GridOverlay(int startX, int startY, int size, const std::string& aboveColor, const std::string& centerColor, WebcamCapture& webcam);
 
-    void drawGrid(cv::Mat& frame, const std::string& colorAbove, const std::string& colorCenter);
+    void drawGrid(cv::Mat& frame, const std::string& colorAbove, const std::string& colorCenter, int language);
 
     void updateFaceLabels(const std::string& newAboveColor, const std::string& newCenterColor);
 
@@ -35,6 +35,8 @@ private:
     void drawGridLines(cv::Mat& frame);
 
     void drawLabel(cv::Mat& frame, const std::string& label, const cv::Point& position, const cv::Scalar& color, int fontSize);
+
+    std::string translateColorName(const std::string& color, int language) const;
 };
 
 #endif
