@@ -13,8 +13,8 @@ int main() {
 
     size_t language, choice;
     std::cout << std::endl << "Welcome to the Rubik's Cube Solver!" << std::endl << std::endl;
-    std::cout << std::endl << "Select language" << std::endl;
-    std::cout << std::endl << "Wybierz język: " << std::endl;
+    std::cout << std::endl << "Select language";
+    std::cout << std::endl << "Wybierz język: " << std::endl << std::endl;
     std::cout << "[1] English" << std::endl;
     std::cout << "[2] Polski" << std::endl << std::endl;
     std::cin >> language;
@@ -24,12 +24,12 @@ int main() {
         std::cin >> language;
     }
     if (language == 1) {
-        std::cout << std::endl << "Select mode" << std::endl;
+        std::cout << std::endl << "Select mode" << std::endl << std::endl;
         std::cout << "[1] I know the Rubik's Cube notation" << std::endl;
         std::cout << "[2] I don't know what that is" << std::endl << std::endl;
     }
     else{
-        std::cout << std::endl << "Wybierz tryb" << std::endl;
+        std::cout << std::endl << "Wybierz tryb" << std::endl << std::endl;
         std::cout << "[1] Znam notację kostki Rubika" << std::endl;
         std::cout << "[2] Nie wiem co to jest" << std::endl << std::endl;
     }
