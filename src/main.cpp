@@ -132,38 +132,48 @@ int main() {
     
     if (choice == 2){
         if (language == 1) {
-            std::cout << "Turn the sides with the CENTER piece of the color as shown: " << std::endl;
-            size_t moveCount = 0;
+            std::cin.ignore();
+            std::cout << "Turn the sides with the CENTER piece of the color as shown: " << std::endl << std::endl;
+            std::cout << "Press ENTER twice to show next move" << std::endl << std::endl;
             for (char c : solution) {
-                moveCount++;
-                if (c == 'U') std::cout << std::endl << moveCount << " YELLOW clockwise ";
-                else if (c == 'D') std::cout << std::endl << moveCount << " WHITE clockwise ";
-                else if (c == 'L') std::cout << std::endl << moveCount << " GREEN clockwise ";
-                else if (c == 'R') std::cout << std::endl << moveCount << " BLUE clockwise ";
-                else if (c == 'F') std::cout << std::endl << moveCount << " ORANGE clockwise ";
-                else if (c == 'B') std::cout << std::endl << moveCount << " RED clockwise ";
-
-                else if (c == '\'') {std::cout << "THREE times"; moveCount--;}
-                else if (c == '2') {std::cout << "TWICE"; moveCount--;} 
-                else moveCount--;
+                if (c != '\'' && c != '2'){
+                    std::cin.get();
+                    if (c == 'U') std::cout << std::endl << " YELLOW clockwise ";
+                    else if (c == 'D') std::cout << std::endl << " WHITE clockwise ";
+                    else if (c == 'L') std::cout << std::endl << " GREEN clockwise ";
+                    else if (c == 'R') std::cout << std::endl << " BLUE clockwise ";
+                    else if (c == 'F') std::cout << std::endl << " ORANGE clockwise ";
+                    else if (c == 'B') std::cout << std::endl << " RED clockwise ";
+                }
+                else if (c == '\'') {std::cout << "THREE times";}
+                else if (c == '2') {std::cout << "TWICE";} 
+                else{
+                    continue;
+                }
             }
+            std::cout << std::endl << std::endl << "Thanks for using Cube Solver!" << std::endl;
         } 
         else {
-            std::cout << "Obróć boki ze ŚRODKIEM w kolorze w ten sposób: " << std::endl;
-            size_t moveCount = 0;
+            std::cin.ignore();
+            std::cout << "Obróć sciany ze wskazanym kolorem ŚRODKA w ten sposób: " << std::endl << std::endl;
+            std::cout << "Naciśnij ENTER dwukrotnie aby wyświetlić następny ruch" << std::endl << std::endl;
             for (char c : solution) {
-                moveCount++;
-                if (c == 'U') std::cout << std::endl << moveCount << " ŻÓŁTY zgodnie z ruchem wskazówek zegara ";
-                else if (c == 'D') std::cout << std::endl << moveCount << " BIAŁY zgodnie z ruchem wskazówek zegara ";
-                else if (c == 'L') std::cout << std::endl << moveCount << " ZIELONY zgodnie z ruchem wskazówek zegara ";
-                else if (c == 'R') std::cout << std::endl << moveCount << " NIEBIESKI zgodnie z ruchem wskazówek zegara ";
-                else if (c == 'F') std::cout << std::endl << moveCount << " POMARAŃCZOWY zgodnie z ruchem wskazówek zegara ";
-                else if (c == 'B') std::cout << std::endl << moveCount << " CZERWONY zgodnie z ruchem wskazówek zegara ";
-
-                else if (c == '\'') {std::cout << "TRZY razy"; moveCount--;}
-                else if (c == '2') {std::cout << "DWA razy"; moveCount--;} 
-                else moveCount--;
+                if (c != '\'' && c != '2'){
+                    std::cin.get();
+                    if (c == 'U') std::cout << std::endl << " ŻÓŁTY zgodnie z ruchem wskazówek zegara ";
+                    else if (c == 'D') std::cout << std::endl << " BIAŁY zgodnie z ruchem wskazówek zegara ";
+                    else if (c == 'L') std::cout << std::endl << " ZIELONY zgodnie z ruchem wskazówek zegara ";
+                    else if (c == 'R') std::cout << std::endl << " NIEBIESKI zgodnie z ruchem wskazówek zegara ";
+                    else if (c == 'F') std::cout << std::endl << " POMARAŃCZOWY zgodnie z ruchem wskazówek zegara ";
+                    else if (c == 'B') std::cout << std::endl << " CZERWONY zgodnie z ruchem wskazówek zegara ";
+                }
+                else if (c == '\'') {std::cout << "TRZY razy";}
+                else if (c == '2') {std::cout << "DWA razy";} 
+                else{
+                    continue;
+                }    
             }
+            std::cout << std::endl << std::endl << "Dzieki za skorzystanie z programu!" << std::endl;
         }
     }    
     std::cout << std::endl;    
