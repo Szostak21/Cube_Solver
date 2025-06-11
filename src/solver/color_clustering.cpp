@@ -25,7 +25,6 @@ std::map<std::string, std::vector<std::string>> ColorClustering::assignColorsToC
 {
     std::vector<std::string> facesInOrder = {"Yellow", "Orange", "Red", "Green", "Blue", "White"};
 
-    // 1. Gather all stickers (face, idx, hsv)
     struct Sticker {
         std::string face;
         int idx;
@@ -39,13 +38,11 @@ std::map<std::string, std::vector<std::string>> ColorClustering::assignColorsToC
         }
     }
 
-    // 2. Get center HSVs
     std::map<std::string, cv::Vec<float, 3>> faceCenters;
     for (const auto& face : facesInOrder) {
         faceCenters[face] = cubeSamples.at(face)[4];
     }
 
-    // 3. Build all possible assignments: (distance, stickerIdx, face)
     std::vector<std::tuple<float, int, std::string>> allDistances;
     for (int i = 0; i < 54; ++i) {
         for (const auto& face : facesInOrder) {
@@ -55,7 +52,6 @@ std::map<std::string, std::vector<std::string>> ColorClustering::assignColorsToC
     }
     std::sort(allDistances.begin(), allDistances.end());
 
-    // 4. Greedy global assignment: each sticker to one face, each face gets 9 stickers
     std::map<std::string, int> faceCounts;
     std::vector<std::string> stickerToFace(54, "");
     std::vector<bool> stickerAssigned(54, false);
@@ -68,7 +64,6 @@ std::map<std::string, std::vector<std::string>> ColorClustering::assignColorsToC
         }
     }
 
-    // 5. Build output: for each face, vector of 9 assigned face names (in original order)
     std::map<std::string, std::vector<std::string>> clusteredStickers;
     int idx = 0;
     for (const auto& face : facesInOrder) {
@@ -78,7 +73,7 @@ std::map<std::string, std::vector<std::string>> ColorClustering::assignColorsToC
         }
     }
 
-    // 6. Rotate U (Yellow) face 90 degrees clockwise if needed
+    //Rotate U (Yellow) face 90 degrees clockwise
     {
         const std::vector<std::string>& orig = clusteredStickers["Yellow"];
         std::vector<std::string> rotated(9);
@@ -94,7 +89,22 @@ std::map<std::string, std::vector<std::string>> ColorClustering::assignColorsToC
         clusteredStickers["Yellow"] = rotated;
     }
 
-    // 7. Final check: ensure exactly 9 of each face label
+    //Rotate D (White) face 180 degrees
+    {
+        const std::vector<std::string>& orig = clusteredStickers["White"];
+        std::vector<std::string> rotated(9);
+        rotated[0] = orig[8];
+        rotated[1] = orig[7];
+        rotated[2] = orig[6];
+        rotated[3] = orig[5];
+        rotated[4] = orig[4];
+        rotated[5] = orig[3];
+        rotated[6] = orig[2];
+        rotated[7] = orig[1];
+        rotated[8] = orig[0];
+        clusteredStickers["White"] = rotated;
+    }
+
     std::map<std::string, int> colorCounts;
     for (const auto& [face, stickers] : clusteredStickers) {
         for (const auto& sticker : stickers) {

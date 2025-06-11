@@ -12,6 +12,7 @@ int main() {
     cv::utils::logging::setLogLevel(cv::utils::logging::LOG_LEVEL_ERROR);
 
     size_t language, choice;
+    std::string solution;
     std::cout << std::endl << "Welcome to the Rubik's Cube Solver!" << std::endl << std::endl;
     std::cout << std::endl << "Select language";
     std::cout << std::endl << "Wybierz język: " << std::endl << std::endl;
@@ -43,78 +44,81 @@ int main() {
         }
         std::cin >> choice;
     }
-    WebcamCapture webcam(0);
-    GridOverlay gridOverlay(100, 100, 150, "Red", "Yellow", webcam);
-    ColorClustering colorClustering;
-
-    std::map<std::string, std::vector<cv::Vec<float, 3>>> cubeSamples;
-    std::string colorAbove = "Blue";
-    std::string colorCenter = "Yellow";
-
     while (true) {
-        if (!webcam.captureFrame()) {
-            if (language == 1) {
-                std::cerr << "Failed to capture frame. Exiting..." << std::endl;
-            } else {
-                std::cerr << "Nie udało się przechwycić klatki. Wychodzenie..." << std::endl;
+        WebcamCapture webcam(0);
+        GridOverlay gridOverlay(100, 100, 150, "Red", "Yellow", webcam);
+        ColorClustering colorClustering;
+
+        std::map<std::string, std::vector<cv::Vec<float, 3>>> cubeSamples;
+        std::string colorAbove = "Blue";
+        std::string colorCenter = "Yellow";
+
+        while (true) {
+            if (!webcam.captureFrame()) {
+                if (language == 1) {
+                    std::cerr << "Failed to capture frame. Exiting..." << std::endl;
+                } else {
+                    std::cerr << "Nie udało się przechwycić klatki. Wychodzenie..." << std::endl;
+                }
+                break;
             }
-            break;
+
+            cv::Mat frame = webcam.getFrame();
+            cv::flip(frame, frame, 1);
+
+            if (frame.empty()) {
+                if (language == 1) {
+                    std::cerr << "Empty frame received. Skipping..." << std::endl;
+                } else {
+                    std::cerr << "Otrzymano pustą klatkę. Pomijanie..." << std::endl;
+                }
+                continue;
+            }
+
+            gridOverlay.drawGrid(frame, colorAbove, colorCenter, language);
+
+            int key = cv::waitKey(1);
+
+            if (key == 27) {cv::destroyAllWindows(); return 0;} // ESC key to exit;
+            if (key == ' ' || key == '\r') {
+                std::vector<cv::Vec3f> samples = gridOverlay.captureFace();
+                cubeSamples[colorCenter] = samples;
+                if (colorCenter == "Yellow")      { colorCenter = "Green";  colorAbove = "Yellow"; }
+                else if (colorCenter == "Green")  { colorCenter = "Orange"; colorAbove = "Yellow"; }
+                else if (colorCenter == "Orange") { colorCenter = "Blue";   colorAbove = "Yellow"; }
+                else if (colorCenter == "Blue")   { colorCenter = "Red";    colorAbove = "Yellow"; }
+                else if (colorCenter == "Red")    { colorCenter = "White";  colorAbove = "Red"; }
+                else if (colorCenter == "White")  { colorCenter = ""; colorAbove = "";   break;}
+            }
+            cv::imshow("Rubik's Cube Grid Overlay", frame);
         }
 
-        cv::Mat frame = webcam.getFrame();
-        cv::flip(frame, frame, 1);
-
-        if (frame.empty()) {
+        std::map<std::string, std::vector<std::string>> clusteredStickers = colorClustering.assignColorsToCenters(cubeSamples);
+        std::string kociembaString = buildKociembaString(clusteredStickers);
+        solution = run_python_kociemba(kociembaString);
+        cv::destroyAllWindows();
+        std::cout << std::endl;
+        if (solution.empty() || solution.find("ValueError") != std::string::npos) {
             if (language == 1) {
-                std::cerr << "Empty frame received. Skipping..." << std::endl;
+                std::cerr << "Error: Invalid cube arrangement. Please scan the cube again. (Try in better light)" << std::endl;
             } else {
-                std::cerr << "Otrzymano pustą klatkę. Pomijanie..." << std::endl;
+                std::cerr << "Błąd: Nieprawidłowe ułożenie kostki. Proszę zeskanować kostkę ponownie. (Spróbuj w lepszym świetle)" << std::endl;
             }
             continue;
         }
-
-        gridOverlay.drawGrid(frame, colorAbove, colorCenter, language);
-
-        int key = cv::waitKey(1);
-
-        if (key == 27) {cv::destroyAllWindows(); return 0;} // ESC key to exit;
-        if (key == ' ' || key == '\r') {
-            std::vector<cv::Vec3f> samples = gridOverlay.captureFace();
-            cubeSamples[colorCenter] = samples;
-            if (colorCenter == "Yellow")      { colorCenter = "Green";  colorAbove = "Yellow"; }
-            else if (colorCenter == "Green")  { colorCenter = "Orange"; colorAbove = "Yellow"; }
-            else if (colorCenter == "Orange") { colorCenter = "Blue";   colorAbove = "Yellow"; }
-            else if (colorCenter == "Blue")   { colorCenter = "Red";    colorAbove = "Yellow"; }
-            else if (colorCenter == "Red")    { colorCenter = "White";  colorAbove = "Orange"; }
-            else if (colorCenter == "White")  { colorCenter = ""; colorAbove = "";   break;}
-        }
-        cv::imshow("Rubik's Cube Grid Overlay", frame); //this produces the QSocketNotifier error
-    }
-
-    std::map<std::string, std::vector<std::string>> clusteredStickers = colorClustering.assignColorsToCenters(cubeSamples);
-    std::string kociembaString = buildKociembaString(clusteredStickers);
-    std::string solution = run_python_kociemba(kociembaString);
-    cv::destroyAllWindows();
-    std::cout << std::endl;
-    if (solution.empty() || solution.find("ValueError") != std::string::npos) {
-        if (language == 1) {
-            std::cerr << "Error: Invalid cube arrangement. Please scan the cube again. (Try in better light)" << std::endl;
-        } else {
-            std::cerr << "Błąd: Nieprawidłowe ułożenie kostki. Proszę zeskanować kostkę ponownie. (Spróbuj w lepszym świetle)" << std::endl;
+        else {
+            if (language == 1) {
+                std::cout << "- - - - - - - - -" << std::endl;
+                std::cout << "|  S O L V E D  |" << std::endl;
+                std::cout << "- - - - - - - - -" << std::endl << std::endl;
+            } else {
+                std::cout << "- - - - - - - - - - - - -" << std::endl;
+                std::cout << "|  R O Z W I Ą Z A N O  |" << std::endl;
+                std::cout << "- - - - - - - - - - - - -" << std::endl << std::endl;
+            }
+            break;
         }
     }
-    else{
-        if (language == 1) {
-            std::cout << "- - - - - - - - -" << std::endl;
-            std::cout << "|  S O L V E D  |" << std::endl;
-            std::cout << "- - - - - - - - -" << std::endl << std::endl;
-        } else {
-            std::cout << "- - - - - - - - - - - - -" << std::endl;
-            std::cout << "|  R O Z W I Ą Z A N O  |" << std::endl;
-            std::cout << "- - - - - - - - - - - - -" << std::endl << std::endl;
-        }
- 
-
     if (choice == 1){    
         if (language == 1) {
             std::cout << "ORANGE center in front, YELLOW center on top" << std::endl;
@@ -129,7 +133,7 @@ int main() {
     if (choice == 2){
         if (language == 1) {
             std::cout << "Turn the sides with the CENTER piece of the color as shown: " << std::endl;
-            std:;size_t moveCount = 0;
+            size_t moveCount = 0;
             for (char c : solution) {
                 moveCount++;
                 if (c == 'U') std::cout << std::endl << moveCount << " YELLOW clockwise ";
@@ -142,7 +146,7 @@ int main() {
                 else if (c == '\'') {std::cout << "THREE times"; moveCount--;}
                 else if (c == '2') {std::cout << "TWICE"; moveCount--;} 
                 else moveCount--;
-        }
+            }
         } 
         else {
             std::cout << "Obróć boki ze ŚRODKIEM w kolorze w ten sposób: " << std::endl;
@@ -161,9 +165,7 @@ int main() {
                 else moveCount--;
             }
         }
-
     }    
     std::cout << std::endl;    
-    }
     return 0;
 }
