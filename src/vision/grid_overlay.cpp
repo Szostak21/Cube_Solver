@@ -55,6 +55,19 @@ void GridOverlay::drawGrid(cv::Mat& frame, const std::string& colorAbove, const 
     cv::putText(frame, centerLabel,
                 cv::Point((frameWidth - centerSize.width) / 2, centerY),
                 fontFace, fontScale, colorWhite, thickness);
+
+    std::string scanLabel;
+    if (language == 1) {
+        scanLabel = "Press SPACE to scan";
+    } else {
+        scanLabel = "Nacisnij SPACJE aby zeskanowac";
+    }
+    cv::Size scanSize = cv::getTextSize(scanLabel, fontFace, fontScale, thickness, &baseline);
+    int scanY = centerY + scanSize.height + 15;
+
+    cv::putText(frame, scanLabel,
+                cv::Point((frameWidth - scanSize.width) / 2, scanY),
+                fontFace, fontScale, colorWhite, thickness);
 }
 
 void GridOverlay::updateFaceLabels(const std::string& newAboveColor, const std::string& newCenterColor) {
