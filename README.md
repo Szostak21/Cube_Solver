@@ -1,47 +1,56 @@
-# Cube_Solver
+# Rubik's Cube Solver
 
-**Cube Solver** is a C++ application using OpenCV library to help you solve your Rubik's Cube.
+**Rubik's Cube Solver** is a C++ application that helps you solve a 3x3 Rubik's Cube using OpenCV and Kociemba's algorithm.\
+It detects the cube state from your webcam and provides step-by-step instructions to solve it.
+
 ---
 
-## How to use
+## Demo
 
-### 1. Follow the instructions in "How to build" section.
-This program uses Cmake so you need to build it manually or use an IDE like CLion to use it.
 
-### 2. Select a mode by choosing either option 1 or 2.
-Option 1 is the Rubik's Cube Notation which is a set of labels for each move possible to do on the cube.
-If you want to learn it follow this chart:
 
-https://jperm.net/3x3/moves
+---
 
-Or just use option 2 which displays in plain English what faces you have to turn in order to solve the cube.
+## Features
 
-### 3. Scan the cube.
-Make sure the cube fits EXACTLY in the grid, the CENTER pieces match the colors displayed on the screen and you are using the program in quite good light. 
-Press space or enter to scan the face when ready. Make sure to match the new orientation of center pieces for each face.
-This is crucial to get a successful scan.
+- Real-time webcam cube scanning
+- Color detection using clustering (robust to lighting changes)
+- Solve cube using Kociemba's algorithm
+- Display solution in **Rubik's Cube notation** or plain English instructions
+- Written in C++17 with OpenCV 4.x
 
-### 4. Follow the solution or try again.
-If you scanned the cube correctly the program will output the solution to your scramble. 
-If for some case the scan didn't match any possible Rubik's Cube scramble (Because of bad light or wrong face orientation when scanning)
-the camera will not close and you can try to scan the cube again right away. You can close the program by pressing esc key.
+---
 
-## How it works
+## How It Works
 
-### 1. Webcam Face Capture
-The program displays a live webcam feed with a 3×3 grid overlay in the center of the screen. Each grid square represents a Rubik's Cube sticker. The user aligns the cube with the grid then scans each face by clicking space or enter key. 
-Following the instructions on the screen is crucial to get a successful scan! (The orientation of each face must be correct)
+1. **Webcam Face Capture**\
+   The program overlays a 3×3 grid on the webcam feed. Align the cube with the grid and scan each face by pressing **Space** or **Enter**. Make sure the center pieces match the grid.
 
-### 2. Color Detection via Clustering
-Instead of relying on fixed HSV thresholds (which are sensitive to lighting), the program uses a clustering-based approach:
-- HSV values are sampled from each of the 9 stickers per face.
-- The center sticker of each face is used as a color reference. (because the center pieces never move)
-- Every facelet is assigned to the closest center color using HSV distance.
+2. **Color Detection via Clustering**
 
-### 3. Solving Using Kociemba's Algorithm
-After scanning all six faces, the program:
-- Maps each facelet to its color label: **U (Yellow), F (Orange), B (Red), L (Green), R (Blue), D (White)**
-- Feeds the string into the most popular and one of the fastest cube-solving algorithms - Kociemba's Algorithm and displays the solution.
+   - HSV values are sampled from each of the 9 stickers per face
+   - Center sticker of each face is used as reference
+   - Every facelet is assigned to the closest center color
+
+3. **Cube Solving**\
+   After scanning all six faces:
+
+   - Maps each facelet to its color label: `U (Yellow), F (Orange), B (Red), L (Green), R (Blue), D (White)`
+   - Uses **Kociemba's Algorithm** to compute the solving sequence
+
+---
+
+## Usage
+
+1. Build the project (see [How to Build](#how-to-build))
+2. Run the solver and select a display mode:
+   - **Option 1:** Rubik's Cube notation (U, R, L, F, B, D)\
+     Learn the notation: [Rubik's Cube Moves](https://jperm.net/3x3/moves)
+   - **Option 2:** Plain English instructions
+3. Scan all six faces following on-screen instructions
+4. Follow the solution steps or retry scanning if necessary
+5. Press **Esc** to exit
+
 ---
 
 ## Requirements
@@ -62,3 +71,44 @@ cd build
 cmake ..
 make
 ./Cube_Solver
+```
+
+You can also build and run the project in an IDE like **CLion**.
+
+---
+
+## Project Structure
+
+```
+Cube_Solver/
+│
+├─ src/          # Source code
+├─ include/      # Header files
+├─ build/        # Build directory
+├─ samples/      # Sample cube images (optional)
+├─ CMakeLists.txt
+└─ README.md
+```
+
+---
+
+## Screenshots / GIFs
+
+- Webcam scan overlay
+- Detected cube state
+- Solution output
+
+*(Dodaj GIF lub screenshot z działania programu)*
+
+---
+
+## Author
+
+**Szostak21** – [GitHub Profile](https://github.com/Szostak21)
+
+---
+
+## License
+
+MIT License. See the [LICENSE](LICENSE) file for details.
+
