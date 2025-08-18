@@ -1,26 +1,45 @@
-# Ignore build folder
+# ------------------------------
+# Build folders
+# ------------------------------
 build/
-
-# CMake generated files
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
 Makefile
 
-# Compiled binaries
+# Compiled binaries and objects
 *.out
 *.o
 *.so
 *.a
 *.exe
+*.dll
+*.dylib
 
+# ------------------------------
 # Editor-specific files
+# ------------------------------
 *.swp
 *.swo
 *~
-.vscode/settings.json
-.vscode/c_cpp_properties.json
+.vscode/
+.idea/
+*.code-workspace
 
-# Mac/Linux hidden files
+# ------------------------------
+# OS-specific files
+# ------------------------------
 .DS_Store
+Thumbs.db
 
+# ------------------------------
+# Backup and temporary files
+# ------------------------------
+*.bak
+*.tmp
+*.log
+
+# ------------------------------
+# Optional: CTest files
+# ------------------------------
+Testing/
