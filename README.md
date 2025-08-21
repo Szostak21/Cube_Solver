@@ -84,26 +84,6 @@ docs/media/demo.gif
 CMakeLists.txt
 ```
 
-## 🧪 Implementation notes (portfolio)
-
-- Empty‑frame safeguards and capture order fix (cvtColor assertions avoided)
-- Display mirroring for user comfort while sampling on the original frame
-- Bilingual labels (EN/PL) centralized in the overlay; consistent color naming across modules
-- Capacity‑aware clustering: ensures the Kociemba string has exactly 9 of each letter
-- Stderr redirection for Python solver to avoid noisy tracebacks in the UI
-
-## 🐛 Troubleshooting
-
-- Black/empty window: check camera permissions and try a different backend (OpenCV auto‑selects; GStreamer/V4L2).
-- Color misclassification: improve lighting, avoid reflections, keep stickers centered in each grid cell.
-- Invalid cube string: the app will ask to rescan; ensure all faces were captured and centers are visible.
-- Python not found: install Python 3 and `pip3 install kociemba`; ensure `python3` is on PATH.
-
 ## 📜 License
 
 MIT — see [LICENSE](LICENSE).
-
-## 🙋 About
-
-Built by [Szostak21](https://github.com/Szostak21). If you’re looking for a developer who ships practical, camera‑driven CV apps with clean UX, let’s talk.
-
