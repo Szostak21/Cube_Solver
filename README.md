@@ -1,6 +1,6 @@
 # Cube Solver – OpenCV + Kociemba (C++17)
 
-*Cube_Solver** is a C++ application using OpenCV to scan a real Rubik's Cube via webcam, detect facelet colors robustly, and convert the detected configuration into a format compatible with the Kociemba two-phase solving algorithm.
+**Cube_Solver** is a C++ application using OpenCV to scan a real Rubik's Cube via webcam, detect facelet colors robustly, and convert the detected configuration into a format compatible with the Kociemba two-phase solving algorithm.
 
 ## 🎬 Demo
 
