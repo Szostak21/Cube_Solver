@@ -1,114 +1,109 @@
-# Rubik's Cube Solver
+# Cube Solver – OpenCV + Kociemba (C++17)
 
-**Rubik's Cube Solver** is a C++ application that helps you solve a 3x3 Rubik's Cube using OpenCV and Kociemba's algorithm.\
-It detects the cube state from your webcam and provides step-by-step instructions to solve it.
+A production‑quality Rubik’s Cube solver for webcam input. It scans the cube live, robustly classifies sticker colors, generates a valid Kociemba string, and shows either the compact move sequence or friendly, step‑by‑step on‑screen instructions.
 
----
+## 🎬 Demo
 
-## Demo
+![Live demo](docs/media/demo.gif)
 
+## ✨ Highlights
 
+- Real‑time webcam scanning with a clean overlay grid
+- Robust color clustering in HSV with balanced assignment (exactly 9 stickers per color)
+- Correct face orientation and Kociemba string generation (U R F D L B)
+- Python Kociemba solver integration with error suppression and validation
+- Two modes: notation output or interactive, on‑screen instructions (SPACE/ENTER to advance)
+- Overlay visibility toggle: camera preview stays live while UI hints hide/unhide as needed
+- C++17, OpenCV 4.x, CMake; minimal dependencies and fast startup
 
----
+## 🧠 How it works
 
-## Features
+1. Scan
+   - A 3×3 grid overlays the live camera. Press SPACE/ENTER to capture each face.
+   - The center sticker of each face is the color anchor; we sample small patches for every facelet.
 
-- Real-time webcam cube scanning
-- Color detection using clustering (robust to lighting changes)
-- Solve cube using Kociemba's algorithm
-- Display solution in **Rubik's Cube notation** or plain English instructions
-- Written in C++17 with OpenCV 4.x
+2. Color clustering (HSV)
+   - Distance to face centers in HSV; greedy, capacity‑aware assignment enforces 9 stickers per color.
+   - Handles lighting variance better than naive RGB thresholds.
 
----
+3. Orientation and string
+   - Faces are rotated to match the Kociemba convention (e.g., U 90° clockwise, D 180° based on your scan).
+   - Colors map to letters: Yellow→U, Blue→R, Orange→F, White→D, Green→L, Red→B.
 
-## How It Works
+4. Solve
+   - The 54‑char string is solved via Python’s `kociemba` package; stderr is suppressed for a clean UX.
+   - If invalid, the app prompts to rescan (common in poor lighting).
 
-1. **Webcam Face Capture**\
-   The program overlays a 3×3 grid on the webcam feed. Align the cube with the grid and scan each face by pressing **Space** or **Enter**. Make sure the center pieces match the grid.
+5. Guide
+   - Mode 1: print solution (notation) immediately.
+   - Mode 2: show step‑by‑step overlay on the live preview; press SPACE/ENTER to advance, ESC to exit.
 
-2. **Color Detection via Clustering**
+## 🛠 Tech stack
 
-   - HSV values are sampled from each of the 9 stickers per face
-   - Center sticker of each face is used as reference
-   - Every facelet is assigned to the closest center color
+- Language: C++17
+- CV/GUI: OpenCV 4.x (videoio, imgproc, highgui)
+- Build: CMake
+- Solver: Python 3 `kociemba` (subprocess call)
 
-3. **Cube Solving**\
-   After scanning all six faces:
+## ▶️ Quick start
 
-   - Maps each facelet to its color label: `U (Yellow), F (Orange), B (Red), L (Green), R (Blue), D (White)`
-   - Uses **Kociemba's Algorithm** to compute the solving sequence
+Prereqs (Ubuntu/Debian):
 
----
+```bash
+sudo apt-get update
+sudo apt-get install -y build-essential cmake libopencv-dev python3 python3-pip
+pip3 install --user kociemba
+```
 
-## Usage
-
-1. Build the project (see [How to Build](#how-to-build))
-2. Run the solver and select a display mode:
-   - **Option 1:** Rubik's Cube notation (U, R, L, F, B, D)\
-     Learn the notation: [Rubik's Cube Moves](https://jperm.net/3x3/moves)
-   - **Option 2:** Plain English instructions
-3. Scan all six faces following on-screen instructions
-4. Follow the solution steps or retry scanning if necessary
-5. Press **Esc** to exit
-
----
-
-## Requirements
-
-- C++17
-- OpenCV 4.x
-- CMake
-
----
-
-## How to Build
+Build & run:
 
 ```bash
 git clone https://github.com/Szostak21/Cube_Solver.git
 cd Cube_Solver
-mkdir build
-cd build
+mkdir -p build && cd build
 cmake ..
-make
+cmake --build .
 ./Cube_Solver
 ```
 
-You can also build and run the project in an IDE like **CLion**.
+Controls:
 
----
+- SPACE/ENTER: scan a face (during scanning) or next step (in instructions mode)
+- ESC: exit the preview
 
-## Project Structure
+## 📁 Project layout
 
 ```
-Cube_Solver/
-│
-├─ src/          # Source code
-├─ include/      # Header files
-├─ build/        # Build directory
-├─ samples/      # Sample cube images (optional)
-├─ CMakeLists.txt
-└─ README.md
+include/           # Public headers (overlay, capture, clustering, kociemba string)
+src/
+  main.cpp         # App entry: capture loop, overlays, modes, solver
+  vision/          # Grid overlay, webcam capture, color sampling
+  solver/          # Kociemba invocation (Python bridge)
+  solver/*.cpp
+docs/media/demo.gif
+CMakeLists.txt
 ```
 
----
+## 🧪 Implementation notes (portfolio)
 
-## Screenshots / GIFs
+- Empty‑frame safeguards and capture order fix (cvtColor assertions avoided)
+- Display mirroring for user comfort while sampling on the original frame
+- Bilingual labels (EN/PL) centralized in the overlay; consistent color naming across modules
+- Capacity‑aware clustering: ensures the Kociemba string has exactly 9 of each letter
+- Stderr redirection for Python solver to avoid noisy tracebacks in the UI
 
-- Webcam scan overlay
-- Detected cube state
-- Solution output
+## 🐛 Troubleshooting
 
-*(Dodaj GIF lub screenshot z działania programu)*
+- Black/empty window: check camera permissions and try a different backend (OpenCV auto‑selects; GStreamer/V4L2).
+- Color misclassification: improve lighting, avoid reflections, keep stickers centered in each grid cell.
+- Invalid cube string: the app will ask to rescan; ensure all faces were captured and centers are visible.
+- Python not found: install Python 3 and `pip3 install kociemba`; ensure `python3` is on PATH.
 
----
+## 📜 License
 
-## Author
+MIT — see [LICENSE](LICENSE).
 
-**Szostak21** – [GitHub Profile](https://github.com/Szostak21)
+## 🙋 About
 
----
-
-## License
-
-MIT License. See the [LICENSE](LICENSE) file for details.
+Built by [Szostak21](https://github.com/Szostak21). If you’re looking for a developer who ships practical, camera‑driven CV apps with clean UX, let’s talk.
 

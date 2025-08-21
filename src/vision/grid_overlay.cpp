@@ -8,6 +8,9 @@ GridOverlay::GridOverlay(int startX, int startY, int size, const std::string& ab
       colorWhite(255, 255, 255), colorGreen(0, 255, 0), colorOrange(0, 165, 255) {}
 
 void GridOverlay::drawGrid(cv::Mat& frame, const std::string& colorAbove, const std::string& colorCenter, int language) {
+    // If overlay is hidden, do nothing but keep the camera running
+    if (!visible_) return;
+
     int frameWidth = frame.cols;
     int frameHeight = frame.rows;
 

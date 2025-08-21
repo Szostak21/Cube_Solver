@@ -15,6 +15,10 @@ public:
 
     std::vector<cv::Vec<float, 3>> captureFace();
 
+    // Control overlay visibility without stopping the camera preview
+    void setVisible(bool visible) { visible_ = visible; }
+    bool isVisible() const { return visible_; }
+
 private:
     int gridStartX;
     int gridStartY;
@@ -37,6 +41,8 @@ private:
     void drawLabel(cv::Mat& frame, const std::string& label, const cv::Point& position, const cv::Scalar& color, int fontSize);
 
     std::string translateColorName(const std::string& color, int language) const;
+
+    bool visible_ = true;
 };
 
 #endif
