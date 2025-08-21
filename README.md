@@ -1,6 +1,6 @@
 # Cube Solver – OpenCV + Kociemba (C++17)
 
-A production‑quality Rubik’s Cube solver for webcam input. It scans the cube live, robustly classifies sticker colors, generates a valid Kociemba string, and shows either the compact move sequence or friendly, step‑by‑step on‑screen instructions.
+*Cube_Solver** is a C++ application using OpenCV to scan a real Rubik's Cube via webcam, detect facelet colors robustly, and convert the detected configuration into a format compatible with the Kociemba two-phase solving algorithm.
 
 ## 🎬 Demo
 
@@ -9,36 +9,32 @@ A production‑quality Rubik’s Cube solver for webcam input. It scans the cube
 ## ✨ Highlights
 
 - Real‑time webcam scanning with a clean overlay grid
+- Two languages to choose: English and Polish
+- Two modes: Rubik's Cube notation output or interactive, on‑screen instructions (SPACE/ENTER to advance)
 - Robust color clustering in HSV with balanced assignment (exactly 9 stickers per color)
-- Correct face orientation and Kociemba string generation (U R F D L B)
-- Python Kociemba solver integration with error suppression and validation
-- Two modes: notation output or interactive, on‑screen instructions (SPACE/ENTER to advance)
-- Overlay visibility toggle: camera preview stays live while UI hints hide/unhide as needed
+- Python Kociemba solver integration for maximum efficiency
 - C++17, OpenCV 4.x, CMake; minimal dependencies and fast startup
 
 ## 🧠 How it works
 
-1. Scan
+1. Scanning
    - A 3×3 grid overlays the live camera. Press SPACE/ENTER to capture each face.
    - The center sticker of each face is the color anchor; we sample small patches for every facelet.
 
 2. Color clustering (HSV)
    - Distance to face centers in HSV; greedy, capacity‑aware assignment enforces 9 stickers per color.
    - Handles lighting variance better than naive RGB thresholds.
-
-3. Orientation and string
-   - Faces are rotated to match the Kociemba convention (e.g., U 90° clockwise, D 180° based on your scan).
    - Colors map to letters: Yellow→U, Blue→R, Orange→F, White→D, Green→L, Red→B.
 
-4. Solve
+4. Solving
    - The 54‑char string is solved via Python’s `kociemba` package; stderr is suppressed for a clean UX.
-   - If invalid, the app prompts to rescan (common in poor lighting).
+   - If impossible state of cube was scanned (because of poor lightning etc.), the app prompts to rescan.
 
-5. Guide
-   - Mode 1: print solution (notation) immediately.
-   - Mode 2: show step‑by‑step overlay on the live preview; press SPACE/ENTER to advance, ESC to exit.
+5. Displaying the solution
+   - Mode 1 — For those who know Rubik’s Cube notation: shows compact moves (U, R, L, F, B, D). Learn the notation: https://jperm.net/3x3/moves
+   - Mode 2 — For those who don’t: displays clear, localized on‑screen steps you can follow, advancing with SPACE/ENTER.
 
-## 🛠 Tech stack
+## �🛠 Tech stack
 
 - Language: C++17
 - CV/GUI: OpenCV 4.x (videoio, imgproc, highgui)
