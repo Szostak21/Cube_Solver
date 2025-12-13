@@ -34,7 +34,7 @@
    - Mode 1 — For those who know Rubik’s Cube notation: shows compact moves (U, R, L, F, B, D). Learn the notation: https://jperm.net/3x3/moves
    - Mode 2 — For those who don’t: displays clear, localized on‑screen steps you can follow, advancing with SPACE/ENTER.
 
-## �🛠 Tech stack
+## 🛠 Tech stack
 
 - Language: C++17
 - CV/GUI: OpenCV 4.x (videoio, imgproc, highgui)
