@@ -1,5 +1,6 @@
 #include "grid_overlay.h"
 #include <map>
+#include <algorithm>
 
 GridOverlay::GridOverlay(int startX, int startY, int size, const std::string& aboveColor, const std::string& centerColor, WebcamCapture& webcam)
     : gridStartX(startX), gridStartY(startY), gridSize(size),
@@ -81,10 +82,8 @@ void GridOverlay::updateFaceLabels(const std::string& newAboveColor, const std::
 std::vector<cv::Vec<float, 3>> GridOverlay::captureFace() {
     cv::Mat frame = webcamCapture.getFrame();
 
-    cv::Mat hsv;
-    cv::cvtColor(frame, hsv, cv::COLOR_BGR2HSV);
-
     int cellSize = gridSize / 3;
+    int half = std::max(2, cellSize / 5);
     std::vector<cv::Vec<float, 3>> hsvSamples;
 
     for (int row = 0; row < 3; ++row) {
@@ -93,11 +92,25 @@ std::vector<cv::Vec<float, 3>> GridOverlay::captureFace() {
             int cx = gridStartX + mirroredCol * cellSize + cellSize / 2;
             int cy = gridStartY + row * cellSize + cellSize / 2;
 
-            cv::Rect region(cx - 2, cy - 2, 5, 5);
-            cv::Mat patch = hsv(region);
+            cv::Rect region(cx - half, cy - half, 2 * half, 2 * half);
+            region &= cv::Rect(0, 0, frame.cols, frame.rows);
+            cv::Mat patch = frame(region);
 
-            cv::Scalar avg = cv::mean(patch);
-            hsvSamples.push_back(cv::Vec<float, 3>(avg[0], avg[1], avg[2]));
+            // Median in BGR: robust to glare/logos, and avoids averaging red hue across the 0/180 wrap
+            cv::Vec3b medianBgr;
+            std::vector<cv::Mat> channels;
+            cv::split(patch, channels);
+            for (int c = 0; c < 3; ++c) {
+                std::vector<uchar> values(channels[c].begin<uchar>(), channels[c].end<uchar>());
+                std::nth_element(values.begin(), values.begin() + values.size() / 2, values.end());
+                medianBgr[c] = values[values.size() / 2];
+            }
+
+            cv::Mat pixel(1, 1, CV_8UC3, cv::Scalar(medianBgr[0], medianBgr[1], medianBgr[2]));
+            cv::Mat pixelHsv;
+            cv::cvtColor(pixel, pixelHsv, cv::COLOR_BGR2HSV);
+            cv::Vec3b hsv = pixelHsv.at<cv::Vec3b>(0, 0);
+            hsvSamples.push_back(cv::Vec<float, 3>(hsv[0], hsv[1], hsv[2]));
         }
     }
     return hsvSamples;

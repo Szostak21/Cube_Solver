@@ -43,3 +43,8 @@ Thumbs.db
 # Optional: CTest files
 # ------------------------------
 Testing/
+
+# ------------------------------
+# Local IntelliSense / vendored headers
+# ------------------------------
+third_party/

@@ -8,11 +8,27 @@
 #include <cmath>
 #include <opencv2/opencv.hpp>
 
+namespace {
+// Lower weight for V, because brightness varies a lot between scanned faces
+const float kValueWeight = 0.4f;
+
+// HSV cone: hue becomes an angle scaled by saturation, so low-saturation (white) stickers
+// ignore their noisy hue and red at H~2 is close to red at H~178
+cv::Vec<float, 3> toCone(const cv::Vec<float, 3>& hsv) {
+    float angle = hsv[0] * static_cast<float>(CV_PI) / 90.0f;
+    return {hsv[1] * std::cos(angle), hsv[1] * std::sin(angle), hsv[2] * kValueWeight};
+}
+
+cv::Vec<float, 3> fromCone(const cv::Vec<float, 3>& cone) {
+    float h = std::atan2(cone[1], cone[0]) * 90.0f / static_cast<float>(CV_PI);
+    if (h < 0) h += 180.0f;
+    return {h, std::hypot(cone[0], cone[1]), cone[2] / kValueWeight};
+}
+}
+
 float ColorClustering::hsvDistance(const cv::Vec<float, 3>& a, const cv::Vec<float, 3>& b) {
-    float dh = std::min(std::abs(a[0] - b[0]), 180.0f - std::abs(a[0] - b[0]));
-    float ds = std::abs(a[1] - b[1]);
-    float dv = std::abs(a[2] - b[2]);
-    return std::sqrt(dh * dh + ds * ds + dv * dv);
+    cv::Vec<float, 3> d = toCone(a) - toCone(b);
+    return d.dot(d);
 }
 
 bool ColorClustering::compareByDistance(const std::pair<float, cv::Vec<float, 3>>& a,
@@ -43,24 +59,44 @@ std::map<std::string, std::vector<std::string>> ColorClustering::assignColorsToC
         faceCenters[face] = cubeSamples.at(face)[4];
     }
 
-    std::vector<std::tuple<float, int, std::string>> allDistances;
-    for (int i = 0; i < 54; ++i) {
-        for (const auto& face : facesInOrder) {
-            float dist = hsvDistance(allStickers[i].hsv, faceCenters[face]);
-            allDistances.emplace_back(dist, i, face);
-        }
-    }
-    std::sort(allDistances.begin(), allDistances.end());
-
-    std::map<std::string, int> faceCounts;
     std::vector<std::string> stickerToFace(54, "");
-    std::vector<bool> stickerAssigned(54, false);
 
-    for (const auto& [dist, stickerIdx, face] : allDistances) {
-        if (!stickerAssigned[stickerIdx] && faceCounts[face] < 9) {
-            stickerToFace[stickerIdx] = face;
-            stickerAssigned[stickerIdx] = true;
-            faceCounts[face]++;
+    for (int iteration = 0; iteration < 5; ++iteration) {
+        std::vector<std::tuple<float, int, std::string>> allDistances;
+        for (int i = 0; i < 54; ++i) {
+            for (const auto& face : facesInOrder) {
+                float dist = hsvDistance(allStickers[i].hsv, faceCenters[face]);
+                allDistances.emplace_back(dist, i, face);
+            }
+        }
+        std::sort(allDistances.begin(), allDistances.end());
+
+        std::map<std::string, int> faceCounts;
+        std::vector<bool> stickerAssigned(54, false);
+        std::fill(stickerToFace.begin(), stickerToFace.end(), "");
+
+        for (int f = 0; f < 6; ++f) {
+            int centerIdx = f * 9 + 4;
+            stickerToFace[centerIdx] = facesInOrder[f];
+            stickerAssigned[centerIdx] = true;
+            faceCounts[facesInOrder[f]] = 1;
+        }
+
+        for (const auto& [dist, stickerIdx, face] : allDistances) {
+            if (!stickerAssigned[stickerIdx] && faceCounts[face] < 9) {
+                stickerToFace[stickerIdx] = face;
+                stickerAssigned[stickerIdx] = true;
+                faceCounts[face]++;
+            }
+        }
+
+        // Use the mean of all 9 assigned stickers as the new reference instead of a single center sample
+        std::map<std::string, cv::Vec<float, 3>> coneSums;
+        for (int i = 0; i < 54; ++i) {
+            coneSums[stickerToFace[i]] += toCone(allStickers[i].hsv);
+        }
+        for (const auto& face : facesInOrder) {
+            faceCenters[face] = fromCone(coneSums[face] / 9.0f);
         }
     }
 

@@ -89,8 +89,8 @@ int main() {
                 int frameWidth = frame.cols;
                 int frameHeight = frame.rows;
                 int fontFace = cv::FONT_HERSHEY_DUPLEX;
-                double fontScale = 0.8;
-                int thickness = 2;
+                double fontScale = 0.4; // 50% of original 0.8
+                int thickness = 1;
                 std::string stepHdr;
                 if (language == 1) {
                     stepHdr = "Step " + std::to_string(currentStep + 1) + "/" + std::to_string(instructions.size()) + ": ";
@@ -105,12 +105,13 @@ int main() {
                               cv::Point((frameWidth + textSize.width) / 2 + 10, y + 10), cv::Scalar(0,0,0), cv::FILLED);
                 cv::putText(frame, line, cv::Point((frameWidth - textSize.width) / 2, y), fontFace, fontScale, cv::Scalar(255,255,255), thickness);
 
-                std::string hint = (language == 1) ? "SPACE/ENTER = next, ESC = exit" : "SPACJA/ENTER = dalej, ESC = wyjście";
-                cv::Size hintSize = cv::getTextSize(hint, fontFace, 0.6, 1, nullptr);
+                std::string hint = (language == 1) ? "SPACE/ENTER = next, ESC = exit" : "SPACJA/ENTER = dalej, ESC = wyjscie";
+                double hintScale = 0.3; // 50% of original 0.6
+                cv::Size hintSize = cv::getTextSize(hint, fontFace, hintScale, 1, nullptr);
                 int hy = y + hintSize.height + 20;
                 cv::rectangle(frame, cv::Point((frameWidth - hintSize.width) / 2 - 8, hy - hintSize.height - 8),
                               cv::Point((frameWidth + hintSize.width) / 2 + 8, hy + 8), cv::Scalar(0,0,0), cv::FILLED);
-                cv::putText(frame, hint, cv::Point((frameWidth - hintSize.width) / 2, hy), fontFace, 0.6, cv::Scalar(255,255,255), 1);
+                cv::putText(frame, hint, cv::Point((frameWidth - hintSize.width) / 2, hy), fontFace, hintScale, cv::Scalar(255,255,255), 1);
             }
 
             // Show the composed frame
@@ -159,7 +160,7 @@ int main() {
                     if (language == 1) {
                         std::cerr << "Error: Invalid cube arrangement. Please scan the cube again. (Try in better light)" << std::endl;
                     } else {
-                        std::cerr << "Błąd: Nieprawidłowe ułożenie kostki. Proszę zeskanować kostkę ponownie. (Spróbuj w lepszym świetle)" << std::endl;
+                        std::cerr << "Błąd: Nieprawidłowe ułożenie kostki. Proszę zeskanować kostkę ponownie. (Spróbuj w lepszym świetle)" << "\n" << kociembaString << std::endl;
                     }
                     // Reset to rescan
                     solution.clear();
@@ -216,12 +217,13 @@ int main() {
                                 if (modifier == '\'') instr += " THREE times";
                                 else if (modifier == '2') instr += " TWICE";
                             } else {
-                                if (c == 'U') instr = "ŻÓŁTY zgodnie z ruchem wskazówek zegara";
-                                else if (c == 'D') instr = "BIAŁY zgodnie z ruchem wskazówek zegara";
-                                else if (c == 'L') instr = "ZIELONY zgodnie z ruchem wskazówek zegara";
-                                else if (c == 'R') instr = "NIEBIESKI zgodnie z ruchem wskazówek zegara";
-                                else if (c == 'F') instr = "POMARAŃCZOWY zgodnie z ruchem wskazówek zegara";
-                                else if (c == 'B') instr = "CZERWONY zgodnie z ruchem wskazówek zegara";
+                                // ASCII only: cv::putText (Hershey) cannot render Polish diacritics
+                                if (c == 'U') instr = "ZOLTY zgodnie z ruchem wskazowek zegara";
+                                else if (c == 'D') instr = "BIALY zgodnie z ruchem wskazowek zegara";
+                                else if (c == 'L') instr = "ZIELONY zgodnie z ruchem wskazowek zegara";
+                                else if (c == 'R') instr = "NIEBIESKI zgodnie z ruchem wskazowek zegara";
+                                else if (c == 'F') instr = "POMARANCZOWY zgodnie z ruchem wskazowek zegara";
+                                else if (c == 'B') instr = "CZERWONY zgodnie z ruchem wskazowek zegara";
                                 if (modifier == '\'') instr += " TRZY razy";
                                 else if (modifier == '2') instr += " DWA razy";
                             }
@@ -232,13 +234,20 @@ int main() {
             }
         }
 
-        if (exitRequested) break; // leave outer loop to print instructions
+        if (exitRequested){
+            if (language == 1) {
+                std::cout << "Exiting program. Goodbye!" << "\n";
+            } else {
+                std::cout << "Zamykanie programu. Do widzenia!" << "\n";
+            }
+            return 0;
+        };
         // If scanning completed and solution is ready, leave outer loop to print instructions
         if (!solution.empty()) break;
     }
     // Close any open windows after preview loop ends
     cv::destroyAllWindows();
-    if (choice == 1 && !solutionPrinted){    
+    if (choice == 1 && !solutionPrinted) {    
         if (language == 1) {
             std::cout << "ORANGE center in front, YELLOW center on top" << std::endl;
             std::cout << "Solution: " << solution << std::endl;

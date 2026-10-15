@@ -1,0 +1,7 @@
+CompileFlags:
+  Add:
+    - -Iinclude
+    - -isystem
+    - third_party/opencv-include/opencv4
+    - -std=c++17
+  CompilationDatabase: build
