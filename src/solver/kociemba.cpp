@@ -1,7 +1,7 @@
 #include "kociemba.h"
 
 std::string run_python_kociemba(const std::string& kociembaString) {
-    std::string command = "python3 -c \"import kociemba; print(kociemba.solve('" + kociembaString + "'))\" 2>/dev/null";
+    std::string command = "python3 -c \"import kociemba; print(kociemba.solve('" + kociembaString + "'))\" 2>&1";
     std::array<char, 128> buffer;
     std::string result;
     FILE* pipe = popen(command.c_str(), "r");
